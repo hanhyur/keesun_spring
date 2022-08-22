@@ -5,6 +5,24 @@
 <web-app>
   <display-name>Archetype Created Web Application</display-name>
 
+  <listener>
+    <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  
+  <filter>
+    <filter-name>myFilter</filter-name>
+    <filter-class>me.gracenam.MyFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>myFilter</filter-name>
+    <servlet-name>hello</servlet-name>
+  </filter-mapping>
+
+  <listener>
+    <listener-class>me.gracenam.MyListener</listener-class>
+  </listener>
+  
   <servlet>
     <servlet-name>hello</servlet-name>
     <servlet-class>me.gracenam.HelloServlet</servlet-class>
