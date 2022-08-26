@@ -17,8 +17,8 @@ class SampleControllerTest {
 
   @Test
   public void hello() throws Exception {
-    this.mockMvc.perform(get("/hello"))
-
+    this.mockMvc.perform(get("/hello")
+            .param("name", "spring"))
         .andDo(print())
         .andExpect(content().string("hello"));
   }

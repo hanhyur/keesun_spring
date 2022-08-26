@@ -11,12 +11,12 @@ public class PersonFormatter implements Formatter<Person> {
   public Person parse(String text, Locale locale) throws ParseException {
     Person person = new Person();
     person.setName(text);
-    return null;
+    return person;
   }
 
   @Override
   public String print(Person object, Locale locale) {
-    return null;
+    return object.toString();
   }
 
 }
