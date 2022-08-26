@@ -10,7 +10,7 @@ public class SampleController {
 
   @GetMapping("/hello")
   public String hello(@RequestParam("name") Person person) {
-    return "hello" + person.getName();
+    return "hello " + person.getName();
   }
 
 }
