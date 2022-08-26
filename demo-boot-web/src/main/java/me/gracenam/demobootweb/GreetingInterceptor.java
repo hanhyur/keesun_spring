@@ -24,5 +24,4 @@ public class GreetingInterceptor implements HandlerInterceptor {
     System.out.println("afterCompletion 1");
   }
 
-
 }
