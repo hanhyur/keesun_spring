@@ -2,7 +2,13 @@ package me.gracenam.springbootneo4j.account;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.neo4j.core.schema.GeneratedValue;
+import org.springframework.data.neo4j.core.schema.Node;
+import org.springframework.data.neo4j.core.schema.Relationship;
 
+import java.util.HashSet;
+import java.util.Set;
+
+@Node
 public class Account {
 
   @Id
@@ -12,6 +18,9 @@ public class Account {
   private String username;
 
   private String email;
+
+  @Relationship(type = "has")
+  private Set<Role> roles = new HashSet<>();
 
   public Long getId() {
     return id;
@@ -36,4 +45,13 @@ public class Account {
   public void setEmail(String email) {
     this.email = email;
   }
+
+  public Set<Role> getRoles() {
+    return roles;
+  }
+
+  public void setRoles(Set<Role> roles) {
+    this.roles = roles;
+  }
+
 }
