@@ -1,22 +1,17 @@
 package me.gracenam.restapiwithspring.events;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
-@Entity
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
-public class Event {
-
-    @Id
-    @GeneratedValue
-    private Integer id;
+public class EventDto {
 
     private String name;
 
@@ -37,12 +32,5 @@ public class Event {
     private int maxPrice;   // (optional)
 
     private int limitOfEnrollment;
-
-    private boolean offline;
-
-    private boolean free;
-
-    @Enumerated(EnumType.STRING)
-    private EventStatus eventStatus = EventStatus.DRAFT;
 
 }
