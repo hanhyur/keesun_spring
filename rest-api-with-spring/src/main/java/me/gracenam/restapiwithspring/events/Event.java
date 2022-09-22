@@ -2,8 +2,10 @@ package me.gracenam.restapiwithspring.events;
 
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.LocalDateTime;
 
+@Entity
 @Getter
 @Setter
 @Builder
@@ -12,6 +14,8 @@ import java.time.LocalDateTime;
 @EqualsAndHashCode(of = "id")
 public class Event {
 
+    @Id
+    @GeneratedValue
     private Integer id;
 
     private String name;
@@ -38,6 +42,7 @@ public class Event {
 
     private boolean free;
 
+    @Enumerated(EnumType.STRING)
     private EventStatus eventStatus;
 
 }
