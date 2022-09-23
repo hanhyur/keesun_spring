@@ -2,12 +2,18 @@ package me.gracenam.restapiwithspring.events;
 
 import me.gracenam.restapiwithspring.commons.ErrorsResource;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -59,8 +65,14 @@ public class EventController {
         return ResponseEntity.created(createdUri).body(eventResource);
     }
 
-    private static ResponseEntity<ErrorsResource> badRequest(Errors errors) {
-        return ResponseEntity.badRequest().body(new ErrorsResource(errors));
+    private static ResponseEntity badRequest(Errors errors) {
+        return ResponseEntity.badRequest().body(ErrorsResource.modelOf(errors));
     }
 
+    @GetMapping
+    public ResponseEntity queryEvent(Pageable pageable, PagedResourcesAssembler<Event> assembler) {
+        Page<Event> page = this.eventRepository.findAll(pageable);
+        var pagedModel = assembler.toModel(page);
+        return ResponseEntity.ok(pagedModel);
+    }
 }
