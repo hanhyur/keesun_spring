@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -54,8 +55,8 @@ public class EventControllerTests {
                 .andExpect(jsonPath("id").exists())
                 .andExpect(header().exists(HttpHeaders.LOCATION))
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaTypes.HAL_JSON_VALUE))
-                .andExpect(jsonPath("id").value(Matchers.not(100)))
-                .andExpect(jsonPath("free").value(Matchers.not(true)))
+                .andExpect(jsonPath("free").value(false))
+                .andExpect(jsonPath("offline").value(true))
                 .andExpect(jsonPath("eventStatus").value(EventStatus.DRAFT.name()));
     }
 
@@ -128,4 +129,57 @@ public class EventControllerTests {
         ;
     }
 
+    @Test
+    public void testFree() {
+        // Given
+        Event event = Event.builder()
+                .basePrice(0)
+                .maxPrice(0)
+                .build();
+
+        // When
+        event.update();
+
+        // Then
+        assertThat(event.isFree()).isTrue();
+
+        event = Event.builder()
+                .basePrice(100)
+                .maxPrice(0)
+                .build();
+
+        event.update();
+
+        assertThat(event.isFree()).isFalse();
+
+        event = Event.builder()
+                .basePrice(0)
+                .maxPrice(100)
+                .build();
+
+        event.update();
+
+        assertThat(event.isFree()).isFalse();
+    }
+
+    @Test
+    public void testOffline() {
+        // Given
+        Event event = Event.builder()
+                .location("강남역 네이버 D2 스타트업 팩토리")
+                .build();
+
+        // When
+        event.update();
+
+        // Then
+        assertThat(event.isOffline()).isTrue();
+
+        event = Event.builder()
+                .build();
+
+        event.update();
+
+        assertThat(event.isOffline()).isFalse();
+    }
 }
