@@ -1,8 +1,9 @@
 package me.gracenam.restapiwithspring.events;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -129,57 +130,51 @@ public class EventControllerTests {
         ;
     }
 
-    @Test
-    public void testFree() {
+    @ParameterizedTest()
+    @MethodSource("parametersForTestFree")
+    public void testFree(int basePrice, int maxPrice, boolean isFree) {
         // Given
         Event event = Event.builder()
-                .basePrice(0)
-                .maxPrice(0)
+                .basePrice(basePrice)
+                .maxPrice(maxPrice)
                 .build();
 
         // When
         event.update();
 
         // Then
-        assertThat(event.isFree()).isTrue();
-
-        event = Event.builder()
-                .basePrice(100)
-                .maxPrice(0)
-                .build();
-
-        event.update();
-
-        assertThat(event.isFree()).isFalse();
-
-        event = Event.builder()
-                .basePrice(0)
-                .maxPrice(100)
-                .build();
-
-        event.update();
-
-        assertThat(event.isFree()).isFalse();
+        assertThat(event.isFree()).isEqualTo(isFree);
     }
 
-    @Test
-    public void testOffline() {
+    private static Object[] parametersForTestFree() {
+        return new Object[] {
+                new Object[] {0, 0, true},
+                new Object[] {100, 0, false},
+                new Object[] {0, 100, false},
+                new Object[] {100, 200, false}
+        };
+    }
+
+    @ParameterizedTest
+    @MethodSource("parametersForTestOffline")
+    public void testOffline(String location, boolean isOffline) {
         // Given
         Event event = Event.builder()
-                .location("강남역 네이버 D2 스타트업 팩토리")
+                .location(location)
                 .build();
 
         // When
         event.update();
 
         // Then
-        assertThat(event.isOffline()).isTrue();
+        assertThat(event.isOffline()).isEqualTo(isOffline);
+    }
 
-        event = Event.builder()
-                .build();
-
-        event.update();
-
-        assertThat(event.isOffline()).isFalse();
+    private static Object[] parametersForTestOffline() {
+        return new Object[] {
+                new Object[] {"강남역 네이버 D2 스타트업 팩토리", true},
+                new Object[] {" ", false},
+                new Object[] {null, false}
+        };
     }
 }
