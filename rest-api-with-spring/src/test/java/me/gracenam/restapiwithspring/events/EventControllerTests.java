@@ -203,7 +203,7 @@ public class EventControllerTests {
         // Given
         IntStream.range(0, 30).forEach(this::generateEvent);
 
-        // When
+        // When & Then
         this.mockMvc.perform(get("/api/events")
                         .param("page", "1")
                         .param("size", "10")
@@ -216,6 +216,33 @@ public class EventControllerTests {
                 .andExpect(jsonPath("_links.self").exists())
                 .andExpect(jsonPath("_links.profile").exists())
                 .andDo(document("query-events"))
+        ;
+    }
+
+    @Test
+    @Description("기존 이벤트 하나 조회")
+    public void getEvent() throws Exception {
+        // Given
+        Event event = this.generateEvent(100);
+
+        // When & Then
+        this.mockMvc.perform(get("/api/events/{id}", event.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("name").exists())
+                .andExpect(jsonPath("id").exists())
+                .andExpect(jsonPath("_links.self").exists())
+                .andExpect(jsonPath("_links.profile").exists())
+        ;
+    }
+
+    @Test
+    @Description("없는 이벤트 조회")
+    public void getEvent404() throws Exception {
+        // When & Then
+        this.mockMvc.perform(get("/api/events/12345"))
+                .andDo(print())
+                .andExpect(status().isNotFound())
         ;
     }
 
@@ -253,6 +280,8 @@ public class EventControllerTests {
                 new Object[] {100, 200, false}
         };
     }
+
+
 
     @ParameterizedTest
     @MethodSource("parametersForTestOffline")
