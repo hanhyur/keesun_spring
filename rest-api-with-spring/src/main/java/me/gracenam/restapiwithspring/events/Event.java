@@ -44,6 +44,7 @@ public class Event {
     private boolean free;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     private EventStatus eventStatus = EventStatus.DRAFT;
 
     @ManyToOne
