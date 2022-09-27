@@ -5,6 +5,7 @@ import me.gracenam.restapiwithspring.accounts.AccountRepository;
 import me.gracenam.restapiwithspring.accounts.AccountRole;
 import me.gracenam.restapiwithspring.accounts.AccountService;
 import me.gracenam.restapiwithspring.common.BaseControllerTest;
+import me.gracenam.restapiwithspring.commons.AppProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -44,6 +45,9 @@ public class EventControllerTests extends BaseControllerTest {
 
     @Autowired
     AccountRepository accountRepository;
+
+    @Autowired
+    AppProperties appProperties;
 
     @BeforeEach
     public void setUp() {
@@ -137,24 +141,18 @@ public class EventControllerTests extends BaseControllerTest {
     }
 
     private String getAccessToken() throws Exception {
-        String username = "springboot@email.com";
-        String password = "springboot";
-
         Account spring = Account.builder()
-                .email(username)
-                .password(password)
+                .email(appProperties.getUserUsername())
+                .password(appProperties.getUserPassword())
                 .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
                 .build();
 
         this.accountService.saveAccount(spring);
 
-        String clientId = "myApp";
-        String clientSecret = "pass";
-
         ResultActions perform = this.mockMvc.perform(post("/oauth/token")
-                .with(httpBasic(clientId, clientSecret))
-                .param("username", username)
-                .param("password", password)
+                .with(httpBasic(appProperties.getClientId(), appProperties.getClientSecret()))
+                .param("username", appProperties.getUserUsername())
+                .param("password", appProperties.getUserPassword())
                 .param("grant_type", "password")
         );
 

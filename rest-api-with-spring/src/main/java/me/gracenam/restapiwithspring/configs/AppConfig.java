@@ -3,6 +3,7 @@ package me.gracenam.restapiwithspring.configs;
 import me.gracenam.restapiwithspring.accounts.Account;
 import me.gracenam.restapiwithspring.accounts.AccountRole;
 import me.gracenam.restapiwithspring.accounts.AccountService;
+import me.gracenam.restapiwithspring.commons.AppProperties;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -34,15 +35,26 @@ public class AppConfig {
             @Autowired
             AccountService accountService;
 
+            @Autowired
+            AppProperties appProperties;
+
             @Override
             public void run(ApplicationArguments args) throws Exception {
-                Account spring = Account.builder()
-                        .email("spring@email.com")
-                        .password("spring")
+                Account admin = Account.builder()
+                        .email(appProperties.getAdminUsername())
+                        .password(appProperties.getAdminPassword())
                         .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
                         .build();
 
-                accountService.saveAccount(spring);
+                accountService.saveAccount(admin);
+
+                Account user = Account.builder()
+                        .email(appProperties.getUserUsername())
+                        .password(appProperties.getUserPassword())
+                        .roles(Set.of(AccountRole.USER))
+                        .build();
+
+                accountService.saveAccount(user);
             }
         };
     }
